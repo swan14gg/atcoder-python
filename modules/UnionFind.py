@@ -1,19 +1,27 @@
 class UnionFind:
     def __init__(self, n):
-        self.parents = [i for i in range(n)]
+        self.n = n
+        self.parents = [-1] * n
 
-    def root(self, x):
-        if self.parents[x] == x:
+    def find(self, x):
+        if self.parents[x] < 0:
             return x
-        self.parents[x] = self.root(self.parents[x])
-        return self.parents[x]
+        else:
+            self.parents[x] = self.find(self.parents[x])
+            return self.parents[x]
 
     def unite(self, x, y):
-        rx = self.root(x)
-        ry = self.root(y)
-        if rx == ry:
+        x = self.find(x)
+        y = self.find(y)
+
+        if x == y:
             return
-        self.parents[rx] = ry
+
+        if self.parents[x] > self.parents[y]:
+            x, y = y, x
+
+        self.parents[x] += self.parents[y]
+        self.parents[y] = x
 
     def is_same(self, x, y):
-        return self.root(x) == self.root(y)
+        return self.find(x) == self.find(y)
